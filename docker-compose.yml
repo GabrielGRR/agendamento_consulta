@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  medicos_api:
+    build:
+      context: ./medicos_api
+      dockerfile: Dockerfile
+    container_name: medicos_api
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./medicos_api:/app
+      - ./db:/app/data
+    environment:
+      - FLASK_ENV=development
+    depends_on:
+      - sqlite_storage
+
+  pacientes_api:
+    build:
+      context: ./pacientes_api
+      dockerfile: Dockerfile
+    container_name: pacientes_api
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./pacientes_api:/app
+      - ./db:/app/data
+    environment:
+      - FLASK_ENV=development
+    depends_on:
+      - sqlite_storage
+
+  sqlite_storage:
+    image: alpine:latest
+    container_name: sqlite_storage
+    volumes:
+      - ./db:/data
+    command: sh -c "mkdir -p /data && tail -f /dev/null"
+
