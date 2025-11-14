@@ -1,4 +1,4 @@
 Flask==2.3.2
-watchtower==3.0.0
+watchtower==3.4.0
 flasgger==0.9.7
-
+flask-cors==6.0.1

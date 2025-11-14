@@ -1,0 +1,171 @@
+swagger: "2.0"
+info:
+  title: API de Pacientes
+  description: Documentação da API de Pacientes
+  version: "1.0"
+host: "localhost:5001"
+basePath: "/"
+schemes:
+  - http
+paths:
+  /ping:
+    get:
+      tags:
+        - Utilidade
+      summary: Testa se a API está ativa
+      responses:
+        200:
+          description: Retorna status OK
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: OK
+  /pacientes:
+    get:
+      tags:
+        - Pacientes
+      summary: Lista todos os pacientes cadastrados
+      responses:
+        200:
+          description: Lista de pacientes
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Paciente"
+    post:
+      tags:
+        - Pacientes
+      summary: Adiciona um novo paciente
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/Paciente"
+      responses:
+        201:
+          description: Paciente adicionado com sucesso
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+                example: Paciente adicionado com sucesso!
+              id:
+                type: integer
+                example: 1
+        400:
+          description: Dados inválidos
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Campos obrigatórios ausentes
+  /pacientes/{id}:
+    get:
+      tags:
+        - Pacientes
+      summary: Consulta um paciente pelo ID
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: ID do paciente
+      responses:
+        200:
+          description: Dados do paciente
+          schema:
+            $ref: "#/definitions/Paciente"
+        404:
+          description: Paciente não encontrado
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Paciente não encontrado
+    put:
+      tags:
+        - Pacientes
+      summary: Atualiza os dados de um paciente
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: ID do paciente
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/Paciente"
+      responses:
+        200:
+          description: Paciente atualizado com sucesso
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+                example: Paciente atualizado com sucesso!
+        404:
+          description: Paciente não encontrado
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Paciente não encontrado
+    delete:
+      tags:
+        - Pacientes
+      summary: Remove um paciente pelo ID
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: ID do paciente
+      responses:
+        200:
+          description: Paciente removido com sucesso
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+                example: Paciente removido com sucesso!
+        404:
+          description: Paciente não encontrado
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Paciente não encontrado
+definitions:
+  Paciente:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      nome:
+        type: string
+        example: João da Silva
+      cpf:
+        type: string
+        example: "12345678900"
+      data_nascimento:
+        type: string
+        example: 1990-01-01
+      telefone:
+        type: string
+        example: "11999999999"
+      genero:
+        type: string
+        example: M

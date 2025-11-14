@@ -1,0 +1,313 @@
+swagger: "2.0"
+info:
+  title: API de Médicos
+  description: Documentação da API de Médicos
+  version: "1.0"
+host: "localhost:5000"
+basePath: "/"
+schemes:
+  - http
+paths:
+  /ping:
+    get:
+      tags:
+        - Utilidade
+      summary: Testa se a API está ativa
+      responses:
+        200:
+          description: Retorna status OK
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: OK
+    get:
+      tags:
+        - Médicos
+      summary: Lista todos os Médicos cadastrados
+      responses:
+        200:
+          description: Lista de Médicos
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Medico"
+    post:
+      tags:
+        - Médicos
+      summary: Adiciona um novo médico
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/Medico"
+      responses:
+        201:
+          description: Médico adicionado com sucesso
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+                example: médico adicionado com sucesso!
+              id:
+                type: integer
+                example: 1
+        400:
+          description: Dados inválidos
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Campos obrigatórios ausentes
+  /medicos/{id}:
+    get:
+      tags:
+        - Médicos
+      summary: Consulta um médico pelo ID
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: ID do médico
+      responses:
+        200:
+          description: Dados do médico
+          schema:
+            $ref: "#/definitions/medico"
+        404:
+          description: médico não encontrado
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: médico não encontrado
+    put:
+      tags:
+        - Médicos
+      summary: Atualiza os dados de um médico
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: ID do médico
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/medico"
+      responses:
+        200:
+          description: médico atualizado com sucesso
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+                example: médico atualizado com sucesso!
+        404:
+          description: médico não encontrado
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: médico não encontrado
+    delete:
+      tags:
+        - Médicos
+      summary: Remove um médico pelo ID
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: ID do médico
+      responses:
+        200:
+          description: médico removido com sucesso
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+                example: médico removido com sucesso!
+        404:
+          description: médico não encontrado
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: médico não encontrado
+  /medicos:
+    get:
+      tags:
+        - Médicos
+      summary: Lista todos os Médicos cadastrados
+      responses:
+        200:
+          description: Lista de Médicos
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Medico"
+    post:
+      tags:
+        - Médicos
+      summary: Adiciona um novo médico
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/MedicoInput"
+      responses:
+        201:
+          description: Médico adicionado com sucesso
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+                example: Médico adicionado com sucesso!
+              id:
+                type: integer
+                example: 1
+        400:
+          description: Dados inválidos
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Campos obrigatórios ausentes
+  /medicos/{id}:
+    get:
+      tags:
+        - Médicos
+      summary: Consulta um médico pelo ID
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: ID do médico
+      responses:
+        200:
+          description: Dados do médico
+          schema:
+            $ref: "#/definitions/Medico"
+        404:
+          description: Médico não encontrado
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Médico não encontrado
+    put:
+      tags:
+        - Médicos
+      summary: Atualiza os dados de um médico
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: ID do médico
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/MedicoInput"
+      responses:
+        200:
+          description: Médico atualizado com sucesso
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+                example: Médico atualizado com sucesso!
+        404:
+          description: Médico não encontrado
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Médico não encontrado
+    delete:
+      tags:
+        - Médicos
+      summary: Remove um médico pelo ID
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: ID do médico
+      responses:
+        200:
+          description: Médico removido com sucesso
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+                example: Médico removido com sucesso!
+        404:
+          description: Médico não encontrado
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Médico não encontrado
+definitions:
+  Medico:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      nome:
+        type: string
+        example: João da Silva
+      crm:
+        type: string
+        example: "123456"
+      especialidade:
+        type: string
+        example: Cardiologia
+      horario:
+        type: string
+        example: "08:00-17:00"
+      genero:
+        type: string
+        example: M
+  MedicoInput:
+    type: object
+    properties:
+      nome:
+        type: string
+        example: João da Silva
+      crm:
+        type: string
+        example: "123456"
+      especialidade:
+        type: string
+        example: Cardiologia
+      horario:
+        type: string
+        example: "08:00-17:00"
+      genero:
+        type: string
+        example: M

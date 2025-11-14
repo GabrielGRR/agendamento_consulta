@@ -4,11 +4,31 @@ import os
 import logging
 import watchtower
 from flasgger import Swagger
+from flask_cors import CORS
+
 
 app = Flask(__name__)
-swagger = Swagger(app)
+CORS(app)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SWAGGER_YML = os.path.join(BASE_DIR, "swagger.yml")
+swagger = Swagger(app, template_file=SWAGGER_YML)
 DB_DIR = "../db"
 DB = os.path.join(DB_DIR, "medicos.db")
+
+
+# Configuração do logger: tenta CloudWatch, senão usa console
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+try:
+    logger.addHandler(
+        watchtower.CloudWatchLogHandler(
+            log_group="medicos-api-logs", region_name="us-east-1"
+        )
+    )
+    logger.info("Aplicação iniciada e log integrado ao CloudWatch")
+except Exception as e:
+    logger.warning(f"CloudWatch não configurado: {e}. Usando logger local.")
+
 
 def init_db():
     # Garante que o diretório existe
@@ -185,7 +205,7 @@ if __name__ == "__main__":
 # Configura o logger para CloudWatch
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-logger.addHandler(watchtower.CloudWatchLogHandler(log_group='medicos-api-logs'))
+logger.addHandler(watchtower.CloudWatchLogHandler(log_group="medicos-api-logs"))
 
 # Exemplo de uso:
 logger.info("Aplicação iniciada e log integrado ao CloudWatch")

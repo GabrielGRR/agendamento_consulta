@@ -4,18 +4,29 @@ import os
 import logging
 import watchtower
 from flasgger import Swagger
+from flask_cors import CORS
 
 app = Flask(__name__)
-swagger = Swagger(app)
+CORS(app)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SWAGGER_YML = os.path.join(BASE_DIR, "swagger.yml")
+swagger = Swagger(app, template_file=SWAGGER_YML)
 DB_DIR = "../db"
 DB = os.path.join(DB_DIR, "pacientes.db")
 
-# Configuração do logger para AWS CloudWatch
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("pacientes_api")
-logger.addHandler(watchtower.CloudWatchLogHandler(log_group='pacientes-api-logs'))
-logger.info("Aplicação Flask de pacientes iniciada e log integrado ao CloudWatch")
 
+# Configuração do logger: tenta CloudWatch, senão usa console
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+try:
+    logger.addHandler(
+        watchtower.CloudWatchLogHandler(
+            log_group="pacientes-api-logs", region_name="us-east-1"
+        )
+    )
+    logger.info("Aplicação iniciada e log integrado ao CloudWatch")
+except Exception as e:
+    logger.warning(f"CloudWatch não configurado: {e}. Usando logger local.")
 
 def init_db():
     # Garante que o diretório existe
@@ -38,21 +49,8 @@ def init_db():
 
 @app.route("/ping", methods=["GET"])
 def ping():
-    """
-    Testa se a API está ativa.
-    ---
-    responses:
-      200:
-        description: Retorna status OK
-        schema:
-          type: object
-          properties:
-            status:
-              type: string
-              example: OK
-    """
-    logger.info("Ping recebido")
-    return jsonify({"status": "OK"})
+        logger.info("Ping recebido")
+        return jsonify({"status": "OK"})
 
 
 @app.route("/pacientes", methods=["GET"])
@@ -63,7 +61,19 @@ def listar_pacientes():
     cursor.execute("SELECT * FROM pacientes")
     pacientes = cursor.fetchall()
     conn.close()
-    # Inclui os novos campos na resposta
+    return jsonify(
+        [
+            {
+                "id": m[0],
+                "nome": m[1],
+                "cpf": m[2],
+                "data_nascimento": m[3],
+                "telefone": m[4],
+                "genero": m[5],
+            }
+            for m in pacientes
+        ]
+    )
     return jsonify(
         [
             {
