@@ -3,7 +3,7 @@ import sqlite3
 import os
 
 app = Flask(__name__)
-DB_DIR = "/app/data"
+DB_DIR = "./data"
 DB = os.path.join(DB_DIR, "pacientes.db")
 
 
