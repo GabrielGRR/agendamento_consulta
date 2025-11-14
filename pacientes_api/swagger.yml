@@ -3,7 +3,7 @@ info:
   title: API de Pacientes
   description: Documentação da API de Pacientes
   version: "1.0"
-host: "localhost:5001"
+host: "3.238.233.30:5001"
 basePath: "/"
 schemes:
   - http
