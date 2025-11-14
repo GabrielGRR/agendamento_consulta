@@ -19,10 +19,9 @@ DB = os.path.join(DB_DIR, "pacientes.db")
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 try:
-    boto3_session = boto3.Session(region_name="us-east-1")
     logger.addHandler(
         watchtower.CloudWatchLogHandler(
-            log_group="medicos-api-logs", boto3_session=boto3_session
+            log_group="pacientes-api-logs"
         )
     )
     logger.info("Aplicação iniciada e log integrado ao CloudWatch")
