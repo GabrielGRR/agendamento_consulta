@@ -3,7 +3,7 @@ import sqlite3
 import os
 
 app = Flask(__name__)
-DB_DIR = "./data"
+DB_DIR = "../db"
 DB = os.path.join(DB_DIR, "pacientes.db")
 
 
@@ -179,4 +179,4 @@ def remover_paciente(id):
 
 if __name__ == "__main__":
     init_db()
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=True)
