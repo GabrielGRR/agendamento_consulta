@@ -1,14 +1,14 @@
 from flask import Flask, request, jsonify
 import sqlite3
 import os
+import logging
+import watchtower
+from flasgger import Swagger
 
 app = Flask(__name__)
+swagger = Swagger(app)
 DB_DIR = "../db"
 DB = os.path.join(DB_DIR, "medicos.db")
-# PLACEHOLDER_URL_MAN = "https://drive.google.com/file/d/1TK1txRuj35Y4Ew6x2d-i4c28QUOeuMPe/view?usp=drive_link"
-# PLACEHOLDER_URL_WOMAN = "https://drive.google.com/file/d/1_o6t43i94YvrP8cqkY821kfJQsR8jfqE/view?usp=drive_link"
-# PLACEHOLDER_URL_UNKNOWN = "https://drive.google.com/file/d/1zCURQCjg5vTnAA7HhKoQ4JxycPwemF_T/view?usp=drive_link"
-
 
 def init_db():
     # Garante que o diretório existe
@@ -31,6 +31,7 @@ def init_db():
 
 @app.route("/ping", methods=["GET"])
 def ping():
+    logger.info("Ping recebido")
     return jsonify({"status": "OK"})
 
 
@@ -180,3 +181,11 @@ def remover_medico(id):
 if __name__ == "__main__":
     init_db()
     app.run(host="0.0.0.0", port=5000, debug=True)
+
+# Configura o logger para CloudWatch
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.addHandler(watchtower.CloudWatchLogHandler(log_group='medicos-api-logs'))
+
+# Exemplo de uso:
+logger.info("Aplicação iniciada e log integrado ao CloudWatch")

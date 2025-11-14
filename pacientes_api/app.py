@@ -1,10 +1,20 @@
 from flask import Flask, request, jsonify
 import sqlite3
 import os
+import logging
+import watchtower
+from flasgger import Swagger
 
 app = Flask(__name__)
+swagger = Swagger(app)
 DB_DIR = "../db"
 DB = os.path.join(DB_DIR, "pacientes.db")
+
+# Configuração do logger para AWS CloudWatch
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("pacientes_api")
+logger.addHandler(watchtower.CloudWatchLogHandler(log_group='pacientes-api-logs'))
+logger.info("Aplicação Flask de pacientes iniciada e log integrado ao CloudWatch")
 
 
 def init_db():
@@ -28,11 +38,26 @@ def init_db():
 
 @app.route("/ping", methods=["GET"])
 def ping():
+    """
+    Testa se a API está ativa.
+    ---
+    responses:
+      200:
+        description: Retorna status OK
+        schema:
+          type: object
+          properties:
+            status:
+              type: string
+              example: OK
+    """
+    logger.info("Ping recebido")
     return jsonify({"status": "OK"})
 
 
 @app.route("/pacientes", methods=["GET"])
 def listar_pacientes():
+    logger.info("Listando pacientes")
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM pacientes")
