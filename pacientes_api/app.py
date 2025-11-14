@@ -213,5 +213,6 @@ def remover_paciente(id):
 
 
 if __name__ == "__main__":
+    os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
     init_db()
     app.run(host="0.0.0.0", port=5001, debug=True)
