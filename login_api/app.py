@@ -1,9 +1,19 @@
 from flask import Flask, request, jsonify
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash # Importa funções para lidar com senhas de forma segura
+from flask import Flask, request, jsonify
+import sqlite3
+import os
+#from flasgger import Swagger
+from flask_cors import CORS
 
 app = Flask(__name__)
-DB = "usuarios.db" # Usamos um banco de dados separado para os usuários
+CORS(app)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+#SWAGGER_YML = os.path.join(BASE_DIR, "swagger.yml")
+#swagger = Swagger(app, template_file=SWAGGER_YML)
+DB_DIR = "../db"
+DB = os.path.join(DB_DIR, "usuarios.db")
 
 
 def init_db():
@@ -88,5 +98,6 @@ def login_user():
 
 
 if __name__ == "__main__":
-    init_db()  # Garante que a tabela de usuários exista
-    app.run(port=5002, debug=True)
+    os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
+    init_db()
+    app.run(host="0.0.0.0", port=5002, debug=True)
