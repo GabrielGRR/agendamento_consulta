@@ -20,6 +20,11 @@ def init_db():
     conn.close()
 
 
+@app.route("/ping", methods=["GET"])
+def ping():
+    print("Ping recebido")
+    return jsonify({"status": "OK"})
+
 @app.route("/register", methods=["POST"])
 def register_user():
     """Rota para registrar um novo usuário."""
