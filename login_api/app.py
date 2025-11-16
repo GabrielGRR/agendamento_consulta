@@ -15,7 +15,8 @@ DB = os.path.join(DB_DIR, "usuarios.db")
 
 
 def init_db():
-    """Inicializa o banco de dados e cria a tabela 'usuarios'."""
+    # Garante que o diretório existe
+    os.makedirs(DB_DIR, exist_ok=True)
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()
     # Criamos a tabela de usuários com 'username' sendo ÚNICO
