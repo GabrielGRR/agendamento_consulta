@@ -35,6 +35,15 @@ def ping():
     print("Ping recebido")
     return jsonify({"status": "OK"})
 
+@app.route("/usuarios", methods=["GET"])
+def listar_usuarios():
+    conn = sqlite3.connect(DB)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM usuarios")
+    usuarios = cursor.fetchall()
+    conn.close()
+    return jsonify(usuarios)
+
 @app.route("/register", methods=["POST"])
 def register_user():
     """Rota para registrar um novo usuário."""
