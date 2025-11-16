@@ -1,0 +1,87 @@
+from flask import Flask, request, jsonify
+import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash # Importa funções para lidar com senhas de forma segura
+
+app = Flask(__name__)
+DB = "usuarios.db" # Usamos um banco de dados separado para os usuários
+
+
+def init_db():
+    """Inicializa o banco de dados e cria a tabela 'usuarios'."""
+    conn = sqlite3.connect(DB)
+    cursor = conn.cursor()
+    # Criamos a tabela de usuários com 'username' sendo ÚNICO
+    cursor.execute('''CREATE TABLE IF NOT EXISTS usuarios (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        username TEXT NOT NULL UNIQUE,
+                        password_hash TEXT NOT NULL
+                    )''')
+    conn.commit()
+    conn.close()
+
+
+@app.route("/register", methods=["POST"])
+def register_user():
+    """Rota para registrar um novo usuário."""
+    data = request.get_json()
+
+    username = data.get("username")
+    password = data.get("password")
+
+    if not username or not password:
+        return jsonify({"erro": "Usuário e senha são obrigatórios"}), 400
+
+    # Gera o hash da senha para armazenamento seguro
+    password_hash = generate_password_hash(password)
+
+    conn = sqlite3.connect(DB)
+    cursor = conn.cursor()
+
+    try:
+        # Tenta inserir o novo usuário
+        cursor.execute("INSERT INTO usuarios (username, password_hash) VALUES (?, ?)",
+                       (username, password_hash))
+        conn.commit()
+        new_id = cursor.lastrowid
+    except sqlite3.IntegrityError:
+        # Erro caso o 'username' já exista (devido à restrição UNIQUE)
+        conn.close()
+        return jsonify({"erro": "Este nome de usuário já existe"}), 409  # 409 Conflict
+    finally:
+        conn.close()
+
+    return jsonify({"mensagem": "Usuário registrado com sucesso!", "id": new_id}), 201
+
+
+@app.route("/login", methods=["POST"])
+def login_user():
+    """Rota para autenticar (fazer login) um usuário."""
+    data = request.get_json()
+
+    username = data.get("username")
+    password = data.get("password")
+
+    if not username or not password:
+        return jsonify({"erro": "Usuário e senha são obrigatórios"}), 400
+
+    conn = sqlite3.connect(DB)
+    cursor = conn.cursor()
+
+    # Busca o usuário pelo username
+    cursor.execute("SELECT * FROM usuarios WHERE username = ?", (username,))
+    user = cursor.fetchone()
+    conn.close()
+
+    # Verifica se o usuário existe E se a senha está correta
+    # user[2] é a coluna 'password_hash'
+    if user and check_password_hash(user[2], password):
+        # Em uma API real, você geraria um token JWT aqui
+        return jsonify({"mensagem": "Login bem-sucedido!", "user_id": user[0]})
+    else:
+        # Resposta genérica para não informar se foi o usuário ou a senha que errou
+        return jsonify({"erro": "Credenciais invalidas."}), 401  # 401 Unauthorized
+
+
+if __name__ == "__main__":
+    init_db()  # Garante que a tabela de usuários exista
+    app.run(port=5002, debug=True)
