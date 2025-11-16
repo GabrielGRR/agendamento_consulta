@@ -1,0 +1,157 @@
+swagger: "2.0"
+info:
+  title: API de Login
+  description: Documentação da API de Autenticação e Usuários
+  version: "1.0"
+host: "3.238.233.30:5002"
+basePath: "/"
+schemes:
+  - http
+paths:
+  /ping:
+    get:
+      tags:
+        - Utilidade
+      summary: Testa se a API está ativa
+      responses:
+        200:
+          description: Retorna status OK
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: OK
+
+  /usuarios:
+    get:
+      tags:
+        - Usuários
+      summary: Lista todos os usuários cadastrados
+      responses:
+        200:
+          description: Lista de usuários
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Usuario"
+
+  /register:
+    post:
+      tags:
+        - Autenticação
+      summary: Registra um novo usuário
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/UsuarioRegistro"
+      responses:
+        201:
+          description: Usuário registrado com sucesso
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+                example: Usuário registrado com sucesso!
+              id:
+                type: integer
+                example: 1
+        400:
+          description: Dados inválidos
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Usuário e senha são obrigatórios
+        409:
+          description: Usuário já existe
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Este nome de usuário já existe
+
+  /login:
+    post:
+      tags:
+        - Autenticação
+      summary: Autentica um usuário
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/UsuarioLogin"
+      responses:
+        200:
+          description: Login bem-sucedido
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+                example: Login bem-sucedido!
+              user_id:
+                type: integer
+                example: 1
+        400:
+          description: Dados inválidos
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Usuário e senha são obrigatórios
+        401:
+          description: Credenciais inválidas
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Credenciais invalidas.
+
+definitions:
+  Usuario:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      username:
+        type: string
+        example: usuario123
+
+  UsuarioRegistro:
+    type: object
+    required:
+      - username
+      - password
+    properties:
+      username:
+        type: string
+        example: usuario123
+      password:
+        type: string
+        format: password
+        example: senhaSegura123
+
+  UsuarioLogin:
+    type: object
+    required:
+      - username
+      - password
+    properties:
+      username:
+        type: string
+        example: usuario123
+      password:
+        type: string
+        format: password
+        example: senhaSegura123
+

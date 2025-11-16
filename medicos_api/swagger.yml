@@ -22,48 +22,20 @@ paths:
               status:
                 type: string
                 example: OK
+  /medicos:
     get:
       tags:
         - Médicos
-      summary: Lista todos os Médicos cadastrados
+      summary: Lista todos os médicos cadastrados
       responses:
         200:
-          description: Lista de Médicos
+          description: Lista de médicos
           schema:
             type: array
             items:
               $ref: "#/definitions/Medico"
-    post:
-      tags:
-        - Médicos
-      summary: Adiciona um novo médico
-      parameters:
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: "#/definitions/Medico"
-      responses:
-        201:
-          description: Médico adicionado com sucesso
-          schema:
-            type: object
-            properties:
-              mensagem:
-                type: string
-                example: médico adicionado com sucesso!
-              id:
-                type: integer
-                example: 1
-        400:
-          description: Dados inválidos
-          schema:
-            type: object
-            properties:
-              erro:
-                type: string
-                example: Campos obrigatórios ausentes
-  /medicos/{id}:
+
+  /consultar_medico/{id}:
     get:
       tags:
         - Médicos
@@ -78,86 +50,17 @@ paths:
         200:
           description: Dados do médico
           schema:
-            $ref: "#/definitions/medico"
+            $ref: "#/definitions/Medico"
         404:
-          description: médico não encontrado
+          description: Médico não encontrado
           schema:
             type: object
             properties:
               erro:
                 type: string
-                example: médico não encontrado
-    put:
-      tags:
-        - Médicos
-      summary: Atualiza os dados de um médico
-      parameters:
-        - name: id
-          in: path
-          type: integer
-          required: true
-          description: ID do médico
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: "#/definitions/medico"
-      responses:
-        200:
-          description: médico atualizado com sucesso
-          schema:
-            type: object
-            properties:
-              mensagem:
-                type: string
-                example: médico atualizado com sucesso!
-        404:
-          description: médico não encontrado
-          schema:
-            type: object
-            properties:
-              erro:
-                type: string
-                example: médico não encontrado
-    delete:
-      tags:
-        - Médicos
-      summary: Remove um médico pelo ID
-      parameters:
-        - name: id
-          in: path
-          type: integer
-          required: true
-          description: ID do médico
-      responses:
-        200:
-          description: médico removido com sucesso
-          schema:
-            type: object
-            properties:
-              mensagem:
-                type: string
-                example: médico removido com sucesso!
-        404:
-          description: médico não encontrado
-          schema:
-            type: object
-            properties:
-              erro:
-                type: string
-                example: médico não encontrado
-  /medicos:
-    get:
-      tags:
-        - Médicos
-      summary: Lista todos os Médicos cadastrados
-      responses:
-        200:
-          description: Lista de Médicos
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Medico"
+                example: Médico não encontrado
+
+  /registrar_medico:
     post:
       tags:
         - Médicos
@@ -187,31 +90,9 @@ paths:
             properties:
               erro:
                 type: string
-                example: Campos obrigatórios ausentes
-  /medicos/{id}:
-    get:
-      tags:
-        - Médicos
-      summary: Consulta um médico pelo ID
-      parameters:
-        - name: id
-          in: path
-          type: integer
-          required: true
-          description: ID do médico
-      responses:
-        200:
-          description: Dados do médico
-          schema:
-            $ref: "#/definitions/Medico"
-        404:
-          description: Médico não encontrado
-          schema:
-            type: object
-            properties:
-              erro:
-                type: string
-                example: Médico não encontrado
+                example: Campos 'nome', 'especialidade' e 'horario' são obrigatórios
+
+  /atualizar_medico/{id}:
     put:
       tags:
         - Médicos
@@ -226,7 +107,7 @@ paths:
           name: body
           required: true
           schema:
-            $ref: "#/definitions/MedicoInput"
+            $ref: "#/definitions/MedicoUpdate"
       responses:
         200:
           description: Médico atualizado com sucesso
@@ -236,6 +117,14 @@ paths:
               mensagem:
                 type: string
                 example: Médico atualizado com sucesso!
+        400:
+          description: Dados inválidos ou requisição sem dados
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Requisição sem dados
         404:
           description: Médico não encontrado
           schema:
@@ -244,6 +133,8 @@ paths:
               erro:
                 type: string
                 example: Médico não encontrado
+
+   /remover_medico/{id}:
     delete:
       tags:
         - Médicos
@@ -271,6 +162,8 @@ paths:
               erro:
                 type: string
                 example: Médico não encontrado
+
+
 definitions:
   Medico:
     type: object
@@ -292,8 +185,32 @@ definitions:
         example: "08:00-17:00"
       genero:
         type: string
+        enum: ["M", "F"]
         example: M
   MedicoInput:
+    type: object
+    required:
+      - nome
+      - especialidade
+      - horario
+    properties:
+      nome:
+        type: string
+        example: João da Silva
+      CRM:
+        type: string
+        example: "123456"
+      especialidade:
+        type: string
+        example: Cardiologia
+      horario:
+        type: string
+        example: "08:00-17:00"
+      genero:
+        type: string
+        enum: ["M", "F"]
+        example: M
+  MedicoUpdate:
     type: object
     properties:
       nome:
@@ -310,4 +227,5 @@ definitions:
         example: "08:00-17:00"
       genero:
         type: string
+        enum: ["M", "F"]
         example: M

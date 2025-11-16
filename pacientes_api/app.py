@@ -74,22 +74,9 @@ def listar_pacientes():
             for m in pacientes
         ]
     )
-    return jsonify(
-        [
-            {
-                "id": m[0],
-                "nome": m[1],
-                "cpf": m[2],
-                "data_nascimento": m[3],
-                "telefone": m[4],
-                "genero": m[5],
-            }
-            for m in pacientes
-        ]
-    )
 
 
-@app.route("/pacientes/<int:id>", methods=["GET"])
+@app.route("/consultar_paciente/<int:id>", methods=["GET"])
 def consultar_paciente(id):
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()
@@ -112,7 +99,7 @@ def consultar_paciente(id):
     return jsonify({"erro": "Paciente não encontrado"}), 404
 
 
-@app.route("/pacientes", methods=["POST"])
+@app.route("/registrar_paciente", methods=["POST"])
 def adicionar_paciente():
     data = request.get_json()
 
@@ -149,7 +136,7 @@ def adicionar_paciente():
     return jsonify({"mensagem": "Paciente adicionado com sucesso!", "id": new_id}), 201
 
 
-@app.route("/pacientes/<int:id>", methods=["PUT"])
+@app.route("/atualizar_paciente/<int:id>", methods=["PUT"])
 def atualizar_paciente(id):
     data = request.get_json()
     if not data:
@@ -194,7 +181,7 @@ def atualizar_paciente(id):
     return jsonify({"mensagem": "Paciente atualizado com sucesso!"})
 
 
-@app.route("/pacientes/<int:id>", methods=["DELETE"])
+@app.route("/remover_paciente/<int:id>", methods=["DELETE"])
 def remover_paciente(id):
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()

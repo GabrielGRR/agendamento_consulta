@@ -34,37 +34,8 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Paciente"
-    post:
-      tags:
-        - Pacientes
-      summary: Adiciona um novo paciente
-      parameters:
-        - in: body
-          name: body
-          required: true
-          schema:
-            $ref: "#/definitions/Paciente"
-      responses:
-        201:
-          description: Paciente adicionado com sucesso
-          schema:
-            type: object
-            properties:
-              mensagem:
-                type: string
-                example: Paciente adicionado com sucesso!
-              id:
-                type: integer
-                example: 1
-        400:
-          description: Dados inválidos
-          schema:
-            type: object
-            properties:
-              erro:
-                type: string
-                example: Campos obrigatórios ausentes
-  /pacientes/{id}:
+
+  /consultar_paciente/{id}:
     get:
       tags:
         - Pacientes
@@ -88,6 +59,40 @@ paths:
               erro:
                 type: string
                 example: Paciente não encontrado
+
+  /registrar_paciente:
+    post:
+      tags:
+        - Pacientes
+      summary: Adiciona um novo paciente
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/PacienteInput"
+      responses:
+        201:
+          description: Paciente adicionado com sucesso
+          schema:
+            type: object
+            properties:
+              mensagem:
+                type: string
+                example: Paciente adicionado com sucesso!
+              id:
+                type: integer
+                example: 1
+        400:
+          description: Dados inválidos
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Campos 'nome', 'cpf', 'data_nascimento', 'telefone' e 'genero' são obrigatórios
+
+  /atualizar_paciente/{id}:
     put:
       tags:
         - Pacientes
@@ -102,7 +107,7 @@ paths:
           name: body
           required: true
           schema:
-            $ref: "#/definitions/Paciente"
+            $ref: "#/definitions/PacienteUpdate"
       responses:
         200:
           description: Paciente atualizado com sucesso
@@ -112,6 +117,14 @@ paths:
               mensagem:
                 type: string
                 example: Paciente atualizado com sucesso!
+        400:
+          description: Dados inválidos ou requisição sem dados
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Requisição sem dados
         404:
           description: Paciente não encontrado
           schema:
@@ -120,6 +133,8 @@ paths:
               erro:
                 type: string
                 example: Paciente não encontrado
+
+  /remover_paciente/{id}:
     delete:
       tags:
         - Pacientes
@@ -147,6 +162,7 @@ paths:
               erro:
                 type: string
                 example: Paciente não encontrado
+                
 definitions:
   Paciente:
     type: object
@@ -162,10 +178,55 @@ definitions:
         example: "12345678900"
       data_nascimento:
         type: string
-        example: 1990-01-01
+        example: "1990-01-01"
       telefone:
         type: string
         example: "11999999999"
       genero:
         type: string
+        enum: ["M", "F"]
+        example: M
+  PacienteInput:
+    type: object
+    required:
+      - nome
+      - cpf
+      - data_nascimento
+      - telefone
+      - genero
+    properties:
+      nome:
+        type: string
+        example: João da Silva
+      cpf:
+        type: string
+        example: "12345678900"
+      data_nascimento:
+        type: string
+        example: "1990-01-01"
+      telefone:
+        type: string
+        example: "11999999999"
+      genero:
+        type: string
+        enum: ["M", "F"]
+        example: M
+  PacienteUpdate:
+    type: object
+    properties:
+      nome:
+        type: string
+        example: João da Silva
+      cpf:
+        type: string
+        example: "12345678900"
+      data_nascimento:
+        type: string
+        example: "1990-01-01"
+      telefone:
+        type: string
+        example: "11999999999"
+      genero:
+        type: string
+        enum: ["M", "F"]
         example: M

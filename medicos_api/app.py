@@ -79,7 +79,7 @@ def listar_medicos():
     )
 
 
-@app.route("/medicos/<int:id>", methods=["GET"])
+@app.route("/consultar_medico/<int:id>", methods=["GET"])
 def consultar_medico(id):
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()
@@ -101,7 +101,7 @@ def consultar_medico(id):
     return jsonify({"erro": "Médico não encontrado"}), 404
 
 
-@app.route("/medicos", methods=["POST"])
+@app.route("/registrar_medico", methods=["POST"])
 def adicionar_medico():
     data = request.get_json()
 
@@ -136,7 +136,7 @@ def adicionar_medico():
     return jsonify({"mensagem": "Médico adicionado com sucesso!", "id": new_id}), 201
 
 
-@app.route("/medicos/<int:id>", methods=["PUT"])
+@app.route("/atualizar_medico/<int:id>", methods=["PUT"])
 def atualizar_medico(id):
     data = request.get_json()
     if not data:
@@ -181,7 +181,7 @@ def atualizar_medico(id):
     return jsonify({"mensagem": "Médico atualizado com sucesso!"})
 
 
-@app.route("/medicos/<int:id>", methods=["DELETE"])
+@app.route("/remover_medico/<int:id>", methods=["DELETE"])
 def remover_medico(id):
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()
