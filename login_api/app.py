@@ -1,9 +1,7 @@
 from flask import Flask, request, jsonify
 import sqlite3
-from werkzeug.security import generate_password_hash, check_password_hash # Importa funções para lidar com senhas de forma segura
-from flask import Flask, request, jsonify
-import sqlite3
 import os
+from werkzeug.security import generate_password_hash, check_password_hash # Importa funções para lidar com senhas de forma segura
 #from flasgger import Swagger
 from flask_cors import CORS
 
@@ -39,10 +37,12 @@ def ping():
 def listar_usuarios():
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM usuarios")
+    cursor.execute("SELECT id, username FROM usuarios")
     usuarios = cursor.fetchall()
     conn.close()
-    return jsonify(usuarios)
+    # Converte para lista de dicionários com apenas id e username
+    usuarios_list = [{"id": usuario[0], "username": usuario[1]} for usuario in usuarios]
+    return jsonify(usuarios_list)
 
 @app.route("/register", methods=["POST"])
 def register_user():
