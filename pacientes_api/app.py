@@ -120,6 +120,7 @@ def ping():
 
 
 @app.route("/pacientes", methods=["GET"])
+@verificar_token_remoto
 def listar_pacientes():
     logger.info("Listando pacientes")
     conn = sqlite3.connect(DB)
@@ -143,6 +144,7 @@ def listar_pacientes():
 
 
 @app.route("/consultar_paciente/<int:id>", methods=["GET"])
+@verificar_token_remoto
 def consultar_paciente(id):
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()
@@ -166,6 +168,7 @@ def consultar_paciente(id):
 
 
 @app.route("/registrar_paciente", methods=["POST"])
+@verificar_token_remoto
 def adicionar_paciente():
     data = request.get_json()
 
@@ -203,6 +206,7 @@ def adicionar_paciente():
 
 
 @app.route("/atualizar_paciente/<int:id>", methods=["PUT"])
+@verificar_token_remoto
 def atualizar_paciente(id):
     data = request.get_json()
     if not data:
@@ -248,6 +252,7 @@ def atualizar_paciente(id):
 
 
 @app.route("/remover_paciente/<int:id>", methods=["DELETE"])
+@verificar_token_remoto
 def remover_paciente(id):
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()
