@@ -28,6 +28,8 @@ paths:
       tags:
         - Usuários
       summary: Lista todos os usuários cadastrados
+      security:
+        - Bearer: []
       responses:
         200:
           description: Lista de usuários
@@ -35,6 +37,14 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Usuario"
+        401:
+          description: Token não fornecido ou inválido
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Token não fornecido
 
   /register:
     post:
@@ -59,6 +69,9 @@ paths:
               id:
                 type: integer
                 example: 1
+              token:
+                type: string
+                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         400:
           description: Dados inválidos
           schema:
@@ -99,6 +112,12 @@ paths:
               user_id:
                 type: integer
                 example: 1
+              username:
+                type: string
+                example: usuario123
+              token:
+                type: string
+                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         400:
           description: Dados inválidos
           schema:
@@ -114,7 +133,69 @@ paths:
             properties:
               erro:
                 type: string
-                example: Credenciais invalidas.
+                example: Credenciais inválidas
+
+  /perfil:
+    get:
+      tags:
+        - Usuários
+      summary: Retorna informações do usuário autenticado
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: Informações do perfil do usuário
+          schema:
+            type: object
+            properties:
+              user_id:
+                type: integer
+                example: 1
+              username:
+                type: string
+                example: usuario123
+              mensagem:
+                type: string
+                example: Você está autenticado!
+        401:
+          description: Token não fornecido, inválido ou expirado
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Token não fornecido
+
+  /verificar-token:
+    get:
+      tags:
+        - Autenticação
+      summary: Verifica se o token JWT é válido
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: Token válido
+          schema:
+            type: object
+            properties:
+              valido:
+                type: boolean
+                example: true
+              user_id:
+                type: integer
+                example: 1
+              username:
+                type: string
+                example: usuario123
+        401:
+          description: Token não fornecido, inválido ou expirado
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Token não fornecido
 
 definitions:
   Usuario:
@@ -155,3 +236,9 @@ definitions:
         format: password
         example: senhaSegura123
 
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: Token JWT no formato "Bearer {token}"

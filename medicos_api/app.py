@@ -6,6 +6,8 @@ import watchtower
 import boto3
 from flasgger import Swagger
 from flask_cors import CORS
+from functools import wraps
+import requests
 
 
 app = Flask(__name__)
@@ -30,6 +32,70 @@ try:
 except Exception as e:
     logger.warning(f"CloudWatch não configurado: {e}. Usando logger local.")
 
+
+# URL do microserviço de autenticação
+AUTH_SERVICE_URL = os.environ.get('AUTH_SERVICE_URL', 'http://172.31.76.139:5002')
+
+def verificar_token_remoto(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+
+        # Procura o token no header Authorization
+        if 'Authorization' in request.headers:
+            auth_header = request.headers['Authorization']
+            try:
+                # Formato esperado: "Bearer <token>"
+                token = auth_header.split(" ")[1]
+            except IndexError:
+                return jsonify({"erro": "Formato de token inválido"}), 401
+        else:
+            return jsonify({"erro": "Token não fornecido"}), 401
+
+        if not token:
+            return jsonify({"erro": "Token não fornecido"}), 401
+
+        # Faz requisição para o microserviço de autenticação
+        try:
+            auth_url = f"{AUTH_SERVICE_URL}/verificar-token"
+            headers = {
+                'Authorization': f'Bearer {token}',
+                'Content-Type': 'application/json'
+            }
+            
+            # Faz a requisição GET para verificar o token
+            response = requests.get(
+                auth_url,
+                headers=headers,
+                timeout=5  # Timeout de 5 segundos
+            )
+            
+            # Se a resposta for 200, o token é válido
+            if response.status_code == 200:
+                data = response.json()
+                # Armazena informações do usuário no request para uso na rota
+                request.user_id = data.get('user_id')
+                request.username = data.get('username')
+                logger.info(f"Token válido para usuário: {request.username}")
+                return f(*args, **kwargs)
+            else:
+                # Token inválido ou expirado
+                error_data = response.json() if response.content else {}
+                error_msg = error_data.get('erro', 'Token inválido')
+                logger.warning(f"Token inválido: {error_msg}")
+                return jsonify({"erro": error_msg}), 401
+                
+        except requests.exceptions.Timeout:
+            logger.error("Timeout ao verificar token no serviço de autenticação")
+            return jsonify({"erro": "Serviço de autenticação indisponível (timeout)"}), 503
+        except requests.exceptions.ConnectionError:
+            logger.error("Erro de conexão com o serviço de autenticação")
+            return jsonify({"erro": "Serviço de autenticação indisponível"}), 503
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Erro ao verificar token: {str(e)}")
+            return jsonify({"erro": "Erro ao verificar token"}), 500
+
+    return decorated
 
 def init_db():
     # Garante que o diretório existe
