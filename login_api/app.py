@@ -6,6 +6,7 @@ from flask_cors import CORS
 from functools import wraps
 import jwt
 from datetime import datetime, timedelta
+from flasgger import Swagger
 
 app = Flask(__name__)
 CORS(app)
@@ -15,6 +16,8 @@ CORS(app)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'sua-chave-secreta-super-segura-aqui')
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SWAGGER_YML = os.path.join(BASE_DIR, "swagger.yml")
+swagger = Swagger(app, template_file=SWAGGER_YML)
 DB_DIR = "../db"
 DB = os.path.join(DB_DIR, "usuarios.db")
 

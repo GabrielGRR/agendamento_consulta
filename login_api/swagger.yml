@@ -28,8 +28,6 @@ paths:
       tags:
         - Usuários
       summary: Lista todos os usuários cadastrados
-      security:
-        - Bearer: []
       responses:
         200:
           description: Lista de usuários
@@ -140,8 +138,6 @@ paths:
       tags:
         - Usuários
       summary: Retorna informações do usuário autenticado
-      security:
-        - Bearer: []
       responses:
         200:
           description: Informações do perfil do usuário
@@ -171,8 +167,6 @@ paths:
       tags:
         - Autenticação
       summary: Verifica se o token JWT é válido
-      security:
-        - Bearer: []
       responses:
         200:
           description: Token válido

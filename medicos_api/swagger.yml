@@ -27,8 +27,6 @@ paths:
       tags:
         - Médicos
       summary: Lista todos os médicos cadastrados
-      security:
-        - Bearer: []
       responses:
         200:
           description: Lista de médicos
@@ -50,8 +48,6 @@ paths:
       tags:
         - Médicos
       summary: Consulta um médico pelo ID
-      security:
-        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -85,8 +81,6 @@ paths:
       tags:
         - Médicos
       summary: Adiciona um novo médico
-      security:
-        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -127,8 +121,6 @@ paths:
       tags:
         - Médicos
       summary: Atualiza os dados de um médico
-      security:
-        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -179,8 +171,6 @@ paths:
       tags:
         - Médicos
       summary: Remove um médico pelo ID
-      security:
-        - Bearer: []
       parameters:
         - name: id
           in: path
