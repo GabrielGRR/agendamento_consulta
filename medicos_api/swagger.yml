@@ -134,7 +134,7 @@ paths:
                 type: string
                 example: Médico não encontrado
 
-   /remover_medico/{id}:
+  /remover_medico/{id}:
     delete:
       tags:
         - Médicos
