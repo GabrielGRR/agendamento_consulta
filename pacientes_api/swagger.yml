@@ -27,6 +27,8 @@ paths:
       tags:
         - Pacientes
       summary: Lista todos os pacientes cadastrados
+      security:
+        - Bearer: []
       responses:
         200:
           description: Lista de pacientes
@@ -34,12 +36,22 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Paciente"
+        401:
+          description: Token não fornecido ou inválido
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Token não fornecido
 
   /consultar_paciente/{id}:
     get:
       tags:
         - Pacientes
       summary: Consulta um paciente pelo ID
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -51,6 +63,14 @@ paths:
           description: Dados do paciente
           schema:
             $ref: "#/definitions/Paciente"
+        401:
+          description: Token não fornecido ou inválido
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Token não fornecido
         404:
           description: Paciente não encontrado
           schema:
@@ -65,6 +85,8 @@ paths:
       tags:
         - Pacientes
       summary: Adiciona um novo paciente
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -91,12 +113,22 @@ paths:
               erro:
                 type: string
                 example: Campos 'nome', 'cpf', 'data_nascimento', 'telefone' e 'genero' são obrigatórios
+        401:
+          description: Token não fornecido ou inválido
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Token não fornecido
 
   /atualizar_paciente/{id}:
     put:
       tags:
         - Pacientes
       summary: Atualiza os dados de um paciente
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -125,6 +157,14 @@ paths:
               erro:
                 type: string
                 example: Requisição sem dados
+        401:
+          description: Token não fornecido ou inválido
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Token não fornecido
         404:
           description: Paciente não encontrado
           schema:
@@ -139,6 +179,8 @@ paths:
       tags:
         - Pacientes
       summary: Remove um paciente pelo ID
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -154,6 +196,14 @@ paths:
               mensagem:
                 type: string
                 example: Paciente removido com sucesso!
+        401:
+          description: Token não fornecido ou inválido
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Token não fornecido
         404:
           description: Paciente não encontrado
           schema:
@@ -162,7 +212,7 @@ paths:
               erro:
                 type: string
                 example: Paciente não encontrado
-                
+
 definitions:
   Paciente:
     type: object
@@ -230,3 +280,10 @@ definitions:
         type: string
         enum: ["M", "F"]
         example: M
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: Token JWT no formato "Bearer {token}"

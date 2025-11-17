@@ -27,6 +27,8 @@ paths:
       tags:
         - Médicos
       summary: Lista todos os médicos cadastrados
+      security:
+        - Bearer: []
       responses:
         200:
           description: Lista de médicos
@@ -34,12 +36,22 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Medico"
+        401:
+          description: Token não fornecido ou inválido
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Token não fornecido
 
   /consultar_medico/{id}:
     get:
       tags:
         - Médicos
       summary: Consulta um médico pelo ID
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -51,6 +63,14 @@ paths:
           description: Dados do médico
           schema:
             $ref: "#/definitions/Medico"
+        401:
+          description: Token não fornecido ou inválido
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Token não fornecido
         404:
           description: Médico não encontrado
           schema:
@@ -65,6 +85,8 @@ paths:
       tags:
         - Médicos
       summary: Adiciona um novo médico
+      security:
+        - Bearer: []
       parameters:
         - in: body
           name: body
@@ -91,12 +113,22 @@ paths:
               erro:
                 type: string
                 example: Campos 'nome', 'especialidade' e 'horario' são obrigatórios
+        401:
+          description: Token não fornecido ou inválido
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Token não fornecido
 
   /atualizar_medico/{id}:
     put:
       tags:
         - Médicos
       summary: Atualiza os dados de um médico
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -125,6 +157,14 @@ paths:
               erro:
                 type: string
                 example: Requisição sem dados
+        401:
+          description: Token não fornecido ou inválido
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Token não fornecido
         404:
           description: Médico não encontrado
           schema:
@@ -139,6 +179,8 @@ paths:
       tags:
         - Médicos
       summary: Remove um médico pelo ID
+      security:
+        - Bearer: []
       parameters:
         - name: id
           in: path
@@ -154,6 +196,14 @@ paths:
               mensagem:
                 type: string
                 example: Médico removido com sucesso!
+        401:
+          description: Token não fornecido ou inválido
+          schema:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: Token não fornecido
         404:
           description: Médico não encontrado
           schema:
@@ -162,7 +212,6 @@ paths:
               erro:
                 type: string
                 example: Médico não encontrado
-
 
 definitions:
   Medico:
@@ -229,3 +278,10 @@ definitions:
         type: string
         enum: ["M", "F"]
         example: M
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: Token JWT no formato "Bearer {token}"
